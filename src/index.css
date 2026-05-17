@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Foodisle palette — warm rice paper, deep persimmon, bamboo green, ink black */
+    --background: 38 36% 96%;
+    --foreground: 20 14% 12%;
+
+    --card: 40 40% 99%;
+    --card-foreground: 20 14% 12%;
+
+    --popover: 40 40% 99%;
+    --popover-foreground: 20 14% 12%;
+
+    --primary: 8 72% 46%;            /* persimmon red 朱紅 */
+    --primary-foreground: 40 40% 98%;
+    --primary-glow: 14 84% 58%;
+
+    --secondary: 152 28% 22%;        /* bamboo green 墨綠 */
+    --secondary-foreground: 40 40% 98%;
+
+    --muted: 36 22% 90%;
+    --muted-foreground: 24 10% 38%;
+
+    --accent: 42 82% 52%;            /* gold 琥珀 */
+    --accent-foreground: 20 14% 12%;
+
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 40 40% 98%;
+
+    --border: 32 20% 86%;
+    --input: 32 20% 86%;
+    --ring: 8 72% 46%;
+
+    --ink: 20 14% 12%;
+    --rice: 38 36% 96%;
+    --paper: 40 40% 99%;
+    --stamp: 8 72% 46%;
+
+    --gradient-hero: linear-gradient(180deg, hsl(20 14% 6% / 0.15) 0%, hsl(20 14% 6% / 0.55) 60%, hsl(20 14% 6% / 0.85) 100%);
+    --gradient-warm: linear-gradient(135deg, hsl(8 72% 46%) 0%, hsl(14 84% 58%) 100%);
+    --gradient-paper: linear-gradient(180deg, hsl(38 36% 96%) 0%, hsl(36 30% 92%) 100%);
+
+    --shadow-soft: 0 1px 2px hsl(20 14% 12% / 0.06), 0 8px 24px -12px hsl(20 14% 12% / 0.18);
+    --shadow-stamp: 0 12px 32px -10px hsl(8 72% 46% / 0.4);
+    --shadow-card: 0 1px 0 hsl(32 20% 86%), 0 12px 30px -16px hsl(20 14% 12% / 0.2);
+
+    --radius: 0.5rem;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+  }
+
+  .dark {
+    --background: 20 14% 8%;
+    --foreground: 40 40% 96%;
+    --card: 20 14% 11%;
+    --card-foreground: 40 40% 96%;
+    --popover: 20 14% 11%;
+    --popover-foreground: 40 40% 96%;
+    --primary: 14 84% 58%;
+    --primary-foreground: 20 14% 8%;
+    --secondary: 152 28% 22%;
+    --secondary-foreground: 40 40% 96%;
+    --muted: 20 14% 16%;
+    --muted-foreground: 36 12% 65%;
+    --accent: 42 82% 52%;
+    --accent-foreground: 20 14% 8%;
+    --destructive: 0 72% 50%;
+    --destructive-foreground: 40 40% 96%;
+    --border: 20 14% 18%;
+    --input: 20 14% 18%;
+    --ring: 14 84% 58%;
+  }
+}
+
+@layer base {
+  * { @apply border-border; }
+  html { font-family: 'Noto Sans TC', system-ui, sans-serif; }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "palt";
+  }
+  h1, h2, h3, h4, .font-display {
+    font-family: 'Noto Serif TC', 'Playfair Display', serif;
+    letter-spacing: -0.01em;
+  }
+}
+
+@layer components {
+  .stamp {
+    @apply inline-flex items-center justify-center font-display font-bold text-primary-foreground;
+    background: hsl(var(--stamp));
+    box-shadow: var(--shadow-stamp);
+    border-radius: 4px;
+  }
+  .ink-rule {
+    background: linear-gradient(90deg, transparent, hsl(var(--ink) / 0.4), transparent);
+    height: 1px;
+  }
+}

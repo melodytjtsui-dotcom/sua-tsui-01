@@ -1,0 +1,45 @@
+name: Data Pipeline — Daily Refresh
+
+on:
+  # Runs every day at 02:00 UTC (10:00 Taipei time)
+  schedule:
+    - cron: "0 2 * * *"
+  # Allow manual trigger from GitHub Actions UI
+  workflow_dispatch:
+    inputs:
+      limit:
+        description: "Max OSM nodes to fetch"
+        required: false
+        default: "400"
+
+jobs:
+  etl:
+    name: ETL Pipeline
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python 3.12
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+          cache-dependency-path: pipeline/requirements.txt
+
+      - name: Install dependencies
+        run: pip install -r pipeline/requirements.txt
+
+      - name: Run ETL pipeline
+        env:
+          SUPABASE_URL:              ${{ secrets.SUPABASE_URL }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          LIMIT="${{ github.event.inputs.limit || '400' }}"
+          python pipeline/etl_pipeline.py --limit "$LIMIT"
+
+      - name: Summary
+        if: always()
+        run: echo "Pipeline completed at $(date -u '+%Y-%m-%d %H:%M UTC')"
