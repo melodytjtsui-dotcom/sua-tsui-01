@@ -26,14 +26,13 @@ import requests
 from supabase import create_client, Client
 
 # ── Overpass API ─────────────────────────────────────────────────────────────
-OVERPASS_URL = "https://overpass-api.de/api/interpreter"
+OVERPASS_URL = "https://overpass.kumi.systems/api/interpreter"
 OVERPASS_QUERY = """
 [out:json][timeout:60];
-area["ISO3166-1"="TW"][admin_level=2]->.taiwan;
 (
-  node["amenity"="restaurant"](area.taiwan);
-  node["amenity"="cafe"](area.taiwan);
-  node["amenity"="fast_food"](area.taiwan);
+  node["amenity"="restaurant"](21.9,119.9,25.4,122.1);
+  node["amenity"="cafe"](21.9,119.9,25.4,122.1);
+  node["amenity"="fast_food"](21.9,119.9,25.4,122.1);
 );
 out body {limit};
 """.strip()
@@ -99,7 +98,8 @@ def synthetic_metrics(osm_id: int) -> dict:
 def extract(limit: int) -> list[dict]:
     print(f"[Extract] Querying Overpass API for up to {limit} Taiwan restaurants…")
     query = OVERPASS_QUERY.format(limit=limit)
-    resp = requests.post(OVERPASS_URL, data=query, timeout=90)
+    headers = {"Accept": "application/json", "Content-Type": "application/x-www-form-urlencoded"}
+    resp = requests.post(OVERPASS_URL, data={"data": query}, headers=headers, timeout=90)
     resp.raise_for_status()
     elements = resp.json().get("elements", [])
     nodes = [e for e in elements if e.get("lat") and e.get("lon") and e.get("tags", {}).get("name")]
@@ -157,7 +157,7 @@ def load(supabase: Client, rows: list[dict], batch_size: int = 50) -> int:
 
 # ── Pipeline log ──────────────────────────────────────────────────────────────
 def log_run(supabase: Client, *, source: str, fetched: int, upserted: int,
-            status: str, error: str | None, duration_ms: int):
+            status: str, error, duration_ms: int):
     supabase.table("pipeline_logs").insert({
         "source":           source,
         "records_fetched":  fetched,
