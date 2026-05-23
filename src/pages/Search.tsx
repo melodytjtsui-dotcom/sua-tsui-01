@@ -28,6 +28,7 @@ const Search = () => {
   const initCategory = params.get("category") || "";
   const initQ = params.get("q") || "";
   const [dynamicCategories, setDynamicCategories] = useState<string[]>([]);
+  const [dynamicCities, setDynamicCities] = useState<string[]>([]);
 
   const [city, setCity] = useState(initCity);
   const [category, setCategory] = useState(initCategory);
@@ -42,9 +43,17 @@ const Search = () => {
       const { data } = await supabase.from("restaurants").select("*");
       const rows = (data ?? []) as DBRestaurant[];
       setAll(rows);
-      // Build dynamic category list from actual data
+      // Build dynamic lists from actual data
       const cats = [...new Set(rows.map((r) => r.category).filter(Boolean))].sort();
       setDynamicCategories(cats);
+      const cityList = [...new Set(rows.map((r) => r.city).filter(Boolean))]
+        .sort((a, b) => {
+          // Sort by count descending
+          const ca = rows.filter(r => r.city === a).length;
+          const cb = rows.filter(r => r.city === b).length;
+          return cb - ca;
+        });
+      setDynamicCities(cityList);
       setLoading(false);
     })();
   }, []);
@@ -91,8 +100,8 @@ const Search = () => {
             <h4 className="text-xs font-bold tracking-[0.15em] text-muted-foreground mb-3">縣市</h4>
             <div className="flex flex-wrap gap-1.5">
               <button onClick={() => setCity("")} className={`text-xs px-2.5 py-1 rounded-full border ${!city ? "bg-ink text-paper border-ink" : "border-border hover:border-ink"}`}>全部</button>
-              {cities.slice(0, 9).map((c) => (
-                <button key={c.name} onClick={() => setCity(city === c.name ? "" : c.name)} className={`text-xs px-2.5 py-1 rounded-full border ${city === c.name ? "bg-ink text-paper border-ink" : "border-border hover:border-ink"}`}>{c.name}</button>
+              {dynamicCities.map((c) => (
+                <button key={c} onClick={() => setCity(city === c ? "" : c)} className={`text-xs px-2.5 py-1 rounded-full border ${city === c ? "bg-ink text-paper border-ink" : "border-border hover:border-ink"}`}>{c}</button>
               ))}
             </div>
           </div>
