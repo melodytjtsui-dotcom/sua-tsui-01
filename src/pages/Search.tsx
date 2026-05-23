@@ -4,7 +4,7 @@ import Header from "@/components/site/Header";
 import Footer from "@/components/site/Footer";
 import SearchBar from "@/components/site/SearchBar";
 import RestaurantCard from "@/components/site/RestaurantCard";
-import { categories, cities } from "@/data/restaurants";
+import { cities } from "@/data/restaurants";
 import { SlidersHorizontal } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import type { DBRestaurant } from "@/lib/restaurant-types";
@@ -27,6 +27,7 @@ const Search = () => {
   const initCity = params.get("city") || "";
   const initCategory = params.get("category") || "";
   const initQ = params.get("q") || "";
+  const [dynamicCategories, setDynamicCategories] = useState<string[]>([]);
 
   const [city, setCity] = useState(initCity);
   const [category, setCategory] = useState(initCategory);
@@ -39,7 +40,11 @@ const Search = () => {
     (async () => {
       setLoading(true);
       const { data } = await supabase.from("restaurants").select("*");
-      setAll((data ?? []) as DBRestaurant[]);
+      const rows = (data ?? []) as DBRestaurant[];
+      setAll(rows);
+      // Build dynamic category list from actual data
+      const cats = [...new Set(rows.map((r) => r.category).filter(Boolean))].sort();
+      setDynamicCategories(cats);
       setLoading(false);
     })();
   }, []);
@@ -96,8 +101,8 @@ const Search = () => {
             <h4 className="text-xs font-bold tracking-[0.15em] text-muted-foreground mb-3">分類</h4>
             <div className="flex flex-wrap gap-1.5">
               <button onClick={() => setCategory("")} className={`text-xs px-2.5 py-1 rounded-full border ${!category ? "bg-ink text-paper border-ink" : "border-border hover:border-ink"}`}>全部</button>
-              {categories.map((c) => (
-                <button key={c.name} onClick={() => setCategory(category === c.name ? "" : c.name)} className={`text-xs px-2.5 py-1 rounded-full border ${category === c.name ? "bg-ink text-paper border-ink" : "border-border hover:border-ink"}`}>{c.name}</button>
+              {dynamicCategories.map((c) => (
+                <button key={c} onClick={() => setCategory(category === c ? "" : c)} className={`text-xs px-2.5 py-1 rounded-full border ${category === c ? "bg-ink text-paper border-ink" : "border-border hover:border-ink"}`}>{c}</button>
               ))}
             </div>
           </div>
