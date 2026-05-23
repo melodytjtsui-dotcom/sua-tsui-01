@@ -69,7 +69,7 @@ const Dashboard = () => {
   const [refreshing, setRefreshing]   = useState(false);
   const [lastRefresh, setLastRefresh] = useState<Date | null>(null);
 
-  const fetchAll = useCallback(async () => {
+  const loadData = useCallback(async () => {
     const [
       rests,
       revs,
@@ -92,8 +92,8 @@ const Dashboard = () => {
   }, []);
 
   useEffect(() => {
-    (async () => { setLoading(true); await fetchAll(); setLoading(false); })();
-  }, [fetchAll]);
+    (async () => { setLoading(true); await loadData(); setLoading(false); })();
+  }, [loadData]);
 
   // ── derived data ────────────────────────────────────────────────────────────
   const avgRating = avg(restaurants.map((r) => r.rating ?? 0).filter(Boolean));
@@ -154,10 +154,10 @@ const Dashboard = () => {
     try {
       const { error } = await supabase.functions.invoke("pipeline-refresh");
       if (error) throw error;
-      await fetchAll();
+      await loadData();
     } catch {
       // Edge Function not deployed yet — just re-fetch local data
-      await fetchAll();
+      await loadData();
     } finally {
       setRefreshing(false);
     }
