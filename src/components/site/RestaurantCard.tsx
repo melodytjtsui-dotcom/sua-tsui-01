@@ -3,11 +3,19 @@ import { Star, MapPin, Wallet } from "lucide-react";
 import type { DBRestaurant } from "@/lib/restaurant-types";
 import { priceLabel } from "@/lib/restaurant-types";
 
+const CATEGORY_IMAGES: Record<string, string> = {
+  "台灣料理":  "https://images.unsplash.com/photo-1569050467447-ce54b3bbc37d?w=800",
+  "台式熱炒":  "https://images.unsplash.com/photo-1617196034183-421b4040ed20?w=800",
+  "台灣小吃":  "https://images.unsplash.com/photo-1496116218417-1a781b1c416c?w=800",
+  "點心":      "https://images.unsplash.com/photo-1563245372-f21724e3856d?w=800",
+  "咖啡廳":    "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?w=800",
+  "早午餐":    "https://images.unsplash.com/photo-1533089860892-a7c6f0a88666?w=800",
+};
 const FALLBACK_IMAGE =
   "https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=800";
 
 const RestaurantCard = ({ r }: { r: DBRestaurant }) => {
-  const cover = r.cover_image || FALLBACK_IMAGE;
+  const cover = r.cover_image || CATEGORY_IMAGES[r.category] || FALLBACK_IMAGE;
   return (
     <Link
       to={`/r/${r.id}`}
