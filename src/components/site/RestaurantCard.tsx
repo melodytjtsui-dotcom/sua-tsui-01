@@ -333,9 +333,11 @@ const RestaurantCard = ({ r }: { r: DBRestaurant }) => {
           }}
           className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-500"
         />
-        <span className="absolute top-3 right-3 stamp h-10 w-10 text-sm rounded-full">
-          {(r.rating ?? 0).toFixed(1)}
-        </span>
+        {r.rating != null && r.rating > 0 && (
+          <span className="absolute top-3 right-3 stamp h-10 w-10 text-sm rounded-full">
+            {r.rating.toFixed(1)}
+          </span>
+        )}
       </div>
       <div className="p-4">
         <div className="flex items-baseline justify-between gap-2">
@@ -350,10 +352,17 @@ const RestaurantCard = ({ r }: { r: DBRestaurant }) => {
           {r.description ?? priceLabel(r.avg_price)}
         </p>
         <div className="mt-3 flex items-center gap-3 text-xs text-muted-foreground">
-          <span className="inline-flex items-center gap-1">
-            <Star className="h-3.5 w-3.5 fill-accent text-accent" />
-            {(r.rating ?? 0).toFixed(1)} ({(r.review_count ?? 0).toLocaleString()})
-          </span>
+          {r.rating != null && r.rating > 0 ? (
+            <span className="inline-flex items-center gap-1">
+              <Star className="h-3.5 w-3.5 fill-accent text-accent" />
+              {r.rating.toFixed(1)} ({(r.review_count ?? 0).toLocaleString()})
+            </span>
+          ) : (
+            <span className="inline-flex items-center gap-1 text-muted-foreground/60">
+              <Star className="h-3.5 w-3.5" />
+              暫無評分
+            </span>
+          )}
           <span className="inline-flex items-center gap-1">
             <MapPin className="h-3.5 w-3.5" />
             {r.city}
