@@ -8,6 +8,7 @@ import RestaurantCard from "@/components/site/RestaurantCard";
 import { categories } from "@/data/restaurants";
 import hero from "@/assets/hero-taiwan-food.jpg";
 import { supabase } from "@/integrations/supabase/client";
+import { fetchAll } from "@/lib/supabase-fetch-all";
 import type { DBRestaurant } from "@/lib/restaurant-types";
 
 const featuredCities = ["台北", "新北", "台中", "台南", "高雄", "桃園"];
@@ -25,12 +26,9 @@ const Index = () => {
         .limit(6);
       setFeatured((data ?? []) as DBRestaurant[]);
 
-      const { data: all } = await supabase
-        .from("restaurants")
-        .select("city")
-        .range(0, 9999);
+      const all = await fetchAll<{ city: string }>("restaurants", { select: "city" });
       const counts: Record<string, number> = {};
-      (all ?? []).forEach((r: { city: string }) => {
+      all.forEach((r) => {
         if (r.city) counts[r.city] = (counts[r.city] ?? 0) + 1;
       });
       setCityCounts(counts);

@@ -7,6 +7,7 @@ import RestaurantCard from "@/components/site/RestaurantCard";
 import { cities } from "@/data/restaurants";
 import { SlidersHorizontal } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { fetchAll } from "@/lib/supabase-fetch-all";
 import type { DBRestaurant } from "@/lib/restaurant-types";
 import { priceTierOf } from "@/lib/restaurant-types";
 
@@ -40,8 +41,7 @@ const Search = () => {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const { data } = await supabase.from("restaurants").select("*").range(0, 9999);
-      const rows = (data ?? []) as DBRestaurant[];
+      const rows = await fetchAll<DBRestaurant>("restaurants");
       setAll(rows);
       // Build dynamic lists from actual data
       const cats = [...new Set(rows.map((r) => r.category).filter(Boolean))].sort();

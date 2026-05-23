@@ -10,6 +10,7 @@ import {
 import Header from "@/components/site/Header";
 import Footer from "@/components/site/Footer";
 import { supabase } from "@/integrations/supabase/client";
+import { fetchAll } from "@/lib/supabase-fetch-all";
 import type { DBRestaurant, DBReview } from "@/lib/restaurant-types";
 
 // ── palette ──────────────────────────────────────────────────────────────────
@@ -70,21 +71,21 @@ const Dashboard = () => {
 
   const fetchAll = useCallback(async () => {
     const [
-      { data: rests },
-      { data: revs },
+      rests,
+      revs,
       { count: bCount },
       { data: pLogs },
     ] = await Promise.all([
-      supabase.from("restaurants").select("*").range(0, 9999),
-      supabase.from("reviews").select("created_at, rating"),
+      fetchAll<DBRestaurant>("restaurants"),
+      fetchAll<Pick<DBReview, "created_at" | "rating">>("reviews", { select: "created_at, rating" }),
       supabase.from("bookings").select("*", { count: "exact", head: true }),
       supabase.from("pipeline_logs")
         .select("*")
         .order("ran_at", { ascending: false })
         .limit(5),
     ]);
-    setRestaurants((rests ?? []) as DBRestaurant[]);
-    setReviews((revs ?? []) as Pick<DBReview, "created_at" | "rating">[]);
+    setRestaurants(rests);
+    setReviews(revs);
     setBookingCount(bCount ?? 0);
     setLogs((pLogs ?? []) as PipelineLog[]);
     setLastRefresh(new Date());
