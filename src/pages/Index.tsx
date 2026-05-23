@@ -18,10 +18,15 @@ const Index = () => {
 
   useEffect(() => {
     (async () => {
+      // Featured: high-rated restaurants with meaningful review counts
+      // Sort by review_count DESC (so popular ones show first), min rating filter
+      // This avoids showing 5.0 restaurants with only 1-2 reviews
       const { data } = await supabase
         .from("restaurants")
         .select("*")
-        .order("rating", { ascending: false })
+        .gte("rating", 4.0)
+        .gte("review_count", 100)
+        .order("review_count", { ascending: false })
         .limit(6);
       setFeatured((data ?? []) as DBRestaurant[]);
 

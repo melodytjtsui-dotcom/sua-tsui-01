@@ -19,8 +19,8 @@ const priceTiers = [
 ];
 
 const sorts = [
-  { v: "rating", label: "評分最高" },
   { v: "reviews", label: "最多評論" },
+  { v: "rating", label: "評分最高" },
 ];
 
 const Search = () => {
@@ -34,7 +34,7 @@ const Search = () => {
   const [city, setCity] = useState(initCity);
   const [category, setCategory] = useState(initCategory);
   const [tiers, setTiers] = useState<number[]>([]);
-  const [sort, setSort] = useState("rating");
+  const [sort, setSort] = useState("reviews");
   const [all, setAll] = useState<DBRestaurant[]>([]);
   const [loading, setLoading] = useState(true);
 
