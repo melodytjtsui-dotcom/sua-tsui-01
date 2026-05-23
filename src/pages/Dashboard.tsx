@@ -75,7 +75,7 @@ const Dashboard = () => {
       { count: bCount },
       { data: pLogs },
     ] = await Promise.all([
-      supabase.from("restaurants").select("*"),
+      supabase.from("restaurants").select("*").range(0, 9999),
       supabase.from("reviews").select("created_at, rating"),
       supabase.from("bookings").select("*", { count: "exact", head: true }),
       supabase.from("pipeline_logs")

@@ -40,7 +40,7 @@ const Search = () => {
   useEffect(() => {
     (async () => {
       setLoading(true);
-      const { data } = await supabase.from("restaurants").select("*");
+      const { data } = await supabase.from("restaurants").select("*").range(0, 9999);
       const rows = (data ?? []) as DBRestaurant[];
       setAll(rows);
       // Build dynamic lists from actual data

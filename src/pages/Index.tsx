@@ -27,10 +27,11 @@ const Index = () => {
 
       const { data: all } = await supabase
         .from("restaurants")
-        .select("city");
+        .select("city")
+        .range(0, 9999);
       const counts: Record<string, number> = {};
       (all ?? []).forEach((r: { city: string }) => {
-        counts[r.city] = (counts[r.city] ?? 0) + 1;
+        if (r.city) counts[r.city] = (counts[r.city] ?? 0) + 1;
       });
       setCityCounts(counts);
     })();
